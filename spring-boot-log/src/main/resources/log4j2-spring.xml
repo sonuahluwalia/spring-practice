@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<appenders>
+		<console name="console" target="system_out">
+			<patternlayout
+				pattern="Log4j2 %style{%d{iso8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] 
+				%style{%c{1.}}{bright,yellow}: %msg%n%throwable" />
+		</console>
+
+		<rollingfile name="rollingfile"
+			filename="./logs/spring-boot-logger-log4j2.log"
+			filepattern="./logs/$${date:yyyy-mm}/spring-boot-logger-log4j2-%d{-dd-mmmm-yyyy}-%i.log.gz">
+			<patternlayout>
+				<pattern>Log4j2 %d %p %c{1.} [%t] %m%n</pattern>
+			</patternlayout>
+			<policies>
+				<!-- rollover on startup, daily and when the file reaches 10 megabytes -->
+				<onstartuptriggeringpolicy />
+				<sizebasedtriggeringpolicy size="10 mb" />
+				<timebasedtriggeringpolicy />
+			</policies>
+		</rollingfile>
+	</appenders>
+
+	<loggers>
+		<!-- log everything at info level -->
+		<root level="info">
+			<appenderref ref="console" />
+			<appenderref ref="rollingfile" />
+		</root>
+
+		<!-- log "com.spring.log*" at trace level -->
+		<logger name="com.baeldung" level="trace"></logger>
+	</loggers>
+
+</configuration>

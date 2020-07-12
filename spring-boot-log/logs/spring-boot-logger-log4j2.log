@@ -1,0 +1,6 @@
+Log4j2 2020-07-12 11:28:03,249 INFO c.s.l.SpringBootLogApplication [main] Starting SpringBootLogApplication on SONU-WORK with PID 23900 (E:\Dropbox\Work\full_stack_java\workspace\spring-boot-log\target\classes started by HP in E:\Dropbox\Work\full_stack_java\workspace\spring-boot-log)
+Log4j2 2020-07-12 11:28:03,256 INFO c.s.l.SpringBootLogApplication [main] No active profile set, falling back to default profiles: default
+Log4j2 2020-07-12 11:28:03,691 INFO c.s.l.c.LoggingController [main] An INFO Message
+Log4j2 2020-07-12 11:28:03,691 WARN c.s.l.c.LoggingController [main] A WARN Message
+Log4j2 2020-07-12 11:28:03,692 ERROR c.s.l.c.LoggingController [main] An ERROR Message
+Log4j2 2020-07-12 11:28:03,783 INFO c.s.l.SpringBootLogApplication [main] Started SpringBootLogApplication in 0.971 seconds (JVM running for 3.185)
