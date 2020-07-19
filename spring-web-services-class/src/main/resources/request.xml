@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:gs="http://www.simplilearn.com/lms">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <gs:getUserRequest>
+            <gs:name>Sumit</gs:name>
+        </gs:getUserRequest>
+    </soapenv:Body>
+</soapenv:Envelope>    
