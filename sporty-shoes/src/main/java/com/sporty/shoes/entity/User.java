@@ -29,7 +29,7 @@ public class User {
     private String password;
     private String role;
     private boolean enabled;
-    private Date createdAt = new Date();
+    private Date createdAt;
     private Date modifiedAt;
  
 }
