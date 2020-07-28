@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.sporty.shoes.entity.Category;
 import com.sporty.shoes.entity.Product;
 import com.sporty.shoes.entity.User;
 import com.sporty.shoes.repositry.ProductRepository;
@@ -35,13 +36,14 @@ public class DBUtil {
 
 		for(int i = 1; i < 50; i++) {
 			Product product = new Product();
-			product.setCategory("Category" +i);
+			product.setCategory(Category.MISC);
 			product.setCost((double) (120+i));
 			product.setCreatedAt(new Date());
 			product.setDescription("Product Description" + i );
 			product.setManufacturerName("Manufacturer Name: " + i);
 			product.setModifiedAt(new Date());
 			product.setName("Product Name "+ i);
+			product.setModel("Model Number "+i);
 			productRepositry.save(product);
 		}
 		

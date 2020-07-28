@@ -1,6 +1,5 @@
 package com.sporty.shoes.service.iface;
 
-import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -12,9 +11,10 @@ public interface ProductService {
 
 	public String addProduct(@Valid Product product);
 
-	String updateProduct(@Valid Product product);
+	public String updateProduct(@Valid Product product);
+	
+	String deleteProduct(@Valid Long productId);
 
-	String deleteProduct(@Valid Product product);
+	public Page<Product> getProducts(Pageable pageable);
 
-	public Page<Product> getProducts(Pageable pageable); 
 }

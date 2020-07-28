@@ -7,7 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,8 +23,6 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@NotBlank(message = "Product Name is mandatory")
 	private String name;
 	private String description;
 	private Date createdAt;
@@ -31,6 +30,6 @@ public class Product {
 	private String manufacturerName;
 	private String model;
 	private Double cost;
-	private String category;
+	private Category category;
 	
 }

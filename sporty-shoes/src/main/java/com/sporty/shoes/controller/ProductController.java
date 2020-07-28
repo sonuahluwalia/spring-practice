@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sporty.shoes.dto.ProductDTO;
 import com.sporty.shoes.entity.Product;
 import com.sporty.shoes.service.iface.ProductService;
 import com.sporty.shoes.util.Constants;
@@ -34,66 +36,70 @@ public class ProductController {
 	@Autowired
 	ProductService productService;
 
-	
+	@Autowired
+	private ModelMapper modelMapper;
+
 	@PostMapping("/add")
-	public <T> ResponseEntity<T> addProduct(@Valid @RequestBody Product product, BindingResult result) {
+	public <T> ResponseEntity<T> addProduct(@Valid @RequestBody ProductDTO productDTO, BindingResult result) {
 		List<String> errorMessages = ControllerUtil.errorHandling(result);
-		if(errorMessages.size()==0) {
+		if (errorMessages.size() == 0) {
+			Product product = modelMapper.map(productDTO, Product.class);
 			String message = productService.addProduct(product);
-			if(message.equals(Constants.productSaved)) {
-				return new ResponseEntity<T>((T) message, HttpStatus.OK);			
-			} else if(message.equals(Constants.productNotSaved)) {
-				return new ResponseEntity<T>((T) message, HttpStatus.SERVICE_UNAVAILABLE);			
-			}					
+			if (message.equals(Constants.productSaved)) {
+				return new ResponseEntity<T>((T) message, HttpStatus.OK);
+			} else if (message.equals(Constants.productNotSaved)) {
+				return new ResponseEntity<T>((T) message, HttpStatus.SERVICE_UNAVAILABLE);
+			}
 		} else {
-			return new ResponseEntity<T>((T)errorMessages, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<T>((T) errorMessages, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<T>(HttpStatus.SERVICE_UNAVAILABLE);			
+		return new ResponseEntity<T>(HttpStatus.SERVICE_UNAVAILABLE);
 	}
 
 	@PostMapping("/update")
-	public <T> ResponseEntity<T> updateProduct(@Valid @RequestBody Product product, BindingResult result) {
+	public <T> ResponseEntity<T> updateProduct(@Valid @RequestParam Long productId, @Valid @RequestBody ProductDTO productDTO,
+			BindingResult result) {
 		List<String> errorMessages = ControllerUtil.errorHandling(result);
-		if(errorMessages.size()==0) {
+		System.out.println("Error message : " + errorMessages);
+		if (errorMessages.size() == 0) {
+			Product product = modelMapper.map(productDTO, Product.class);
+			product.setId(productId);
 			String message = productService.updateProduct(product);
-			if(message.equals(Constants.productIdMandatory)) {
-				return new ResponseEntity<T>((T) message, HttpStatus.BAD_REQUEST);			
-			} else if(message.equals(Constants.productUpdatedSuccess)) {
-				return new ResponseEntity<T>((T) message, HttpStatus.OK);			
-			} else if(message.equals(Constants.productNotUpdated)) {
-				return new ResponseEntity<T>((T) message, HttpStatus.NOT_MODIFIED);			
-			} else if(message.equals(Constants.productNotExist)) {
-				return new ResponseEntity<T>((T) message, HttpStatus.NOT_FOUND);			
+			if (message.equals(Constants.productIdLtZero)) {
+				return new ResponseEntity<T>((T) message, HttpStatus.BAD_REQUEST);
+			} else if (message.equals(Constants.productUpdatedSuccess)) {
+				return new ResponseEntity<T>((T) message, HttpStatus.OK);
+			} else if (message.equals(Constants.productNotUpdated)) {
+				return new ResponseEntity<T>((T) message, HttpStatus.NOT_MODIFIED);
+			} else if (message.equals(Constants.productNotExist)) {
+				return new ResponseEntity<T>((T) message, HttpStatus.NOT_FOUND);
 			}
 		} else {
-			return new ResponseEntity<T>((T)errorMessages, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<T>((T) errorMessages, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<T>(HttpStatus.SERVICE_UNAVAILABLE);
 	}
 
 	@PostMapping("/delete")
-	public <T> ResponseEntity<T> deleteProduct(@Valid @RequestBody Product product, BindingResult result) {
-		productService.deleteProduct(product);
-		return new ResponseEntity<T>((T) Constants.productDeleted, HttpStatus.OK);			
-		
-	}
-	
-	
-	@GetMapping(path = "/getProducts")
-	<T> ResponseEntity<T> getProductsPage(
-//	      @PageableDefault(page = 0, size = 5)
-//	      @SortDefault.SortDefaults({
-//	          @SortDefault(sort = "name", direction = Sort.Direction.DESC),
-//	          @SortDefault(sort = "id", direction = Sort.Direction.ASC)
-//	      })
-//	      Pageable pageable
-	      @RequestParam int page, @RequestParam int size) {
-		if (page < 0 || size < 0) {
-			return new ResponseEntity<T>((T)"Invalid Parameters", HttpStatus.BAD_REQUEST);
+	public <T> ResponseEntity<T> deleteProduct(@RequestParam Long productId) {
+		String message = productService.deleteProduct(productId);
+		if (message.equals(Constants.productIdLtZero)) {
+			return new ResponseEntity<T>((T) Constants.productIdLtZero, HttpStatus.BAD_REQUEST);
+		} else if (message.equals(Constants.productNotExist)) {
+			return new ResponseEntity<T>((T) message, HttpStatus.NOT_FOUND);
 		} else {
-			PageRequest pageRequest = PageRequest.of(page-1, size); 
-			return new ResponseEntity<T>((T)productService.getProducts(pageRequest), HttpStatus.OK);
-			
+			return new ResponseEntity<T>((T) Constants.productDeleted, HttpStatus.OK);
+		}
+	}
+
+	@GetMapping(path = "/getProducts")
+	<T> ResponseEntity<T> getProductsPage(@RequestParam int page, @RequestParam int size) {
+		if (page < 0 || size < 0) {
+			return new ResponseEntity<T>((T) "Invalid Parameters", HttpStatus.BAD_REQUEST);
+		} else {
+			PageRequest pageRequest = PageRequest.of(page - 1, size);
+			return new ResponseEntity<T>((T) productService.getProducts(pageRequest), HttpStatus.OK);
+
 		}
 	}
 }

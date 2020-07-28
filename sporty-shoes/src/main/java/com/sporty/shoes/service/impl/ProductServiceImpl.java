@@ -41,6 +41,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public String updateProduct(@Valid Product product) {
+		if (product.getId() < 0) {
+			return Constants.productIdLtZero;
+		}
 
 		if (productRepositry.existsById(product.getId())) {
 			product.setModifiedAt(new Date());
@@ -57,15 +60,22 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public String deleteProduct(@Valid Product product) {
-		productRepositry.delete(product);
-		return Constants.productDeleted;
+	public String deleteProduct(Long productId) {
+		if (productId < 0) {
+			return Constants.productIdLtZero;
+		}
+		if (productRepositry.existsById(productId)) {
+			productRepositry.deleteById(productId);
+			return Constants.productDeleted;
+		} else {
+			return Constants.productNotExist;
+		}
+
 	}
 
 	@Override
-	public Page<Product> getProducts(Pageable pageable) {		
+	public Page<Product> getProducts(Pageable pageable) {
 		return (Page<Product>) productRepositry.findAllByPage(pageable);
 	}
-	
-	
+
 }
