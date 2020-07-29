@@ -1,9 +1,11 @@
 package com.sporty.shoes.service.impl;
 
-
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,25 +20,29 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	UserRepository userRepositry;
-	
 
 	@Override
 	public String changePassword(String password) {
-		System.out.println("reached changed password service");
-		System.out.println("Password is: "+password);
-		MyUserDetails securedUser = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		System.out.println("Username is: " + securedUser.getUsername());
+		MyUserDetails securedUser = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		User user = userRepositry.getUserByUsername(securedUser.getUsername());
 		user.setPassword(SecuredPasswordGenerator.securedPassword(password));
 		user.setModifiedAt(new Date());
-		if (userRepositry.save(user) != null ) {
-			System.out.println(user.getUsername() + " password changed successfully");
-			return user.getUsername() + " password changed successfully";	
+		if (userRepositry.save(user) != null) {
+			return user.getUsername() + " password changed successfully";
 		} else {
-			System.out.println(user.getUsername() + " password not changed successfully");
 			return user.getUsername() + " password not changed successfully";
 		}
-		
+
 	}
 
+	@Override
+	public List<User> getUsers(Pageable pageable) {
+		return userRepositry.findAll(pageable).getContent();
+	}
+
+	@Override
+	public User findUserByName(String name) {
+		return userRepositry.getUserByUsername(name);
+	}
 }
